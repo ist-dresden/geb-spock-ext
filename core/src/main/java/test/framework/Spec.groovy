@@ -1,15 +1,11 @@
 package test.framework
 
 import geb.spock.GebSpec
-import org.junit.AfterClass
-import org.junit.BeforeClass
 import org.junit.runner.RunWith
 import org.openqa.selenium.By
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
-import test.framework.page.LoginPage
-import test.framework.page.LoginPageCQupTo55
-import test.framework.report.Reporting
+import test.framework.config.login.Login
 import test.framework.selenium.Window
 import test.framework.spock.ExtendedSputnik
 
@@ -25,6 +21,8 @@ abstract class Spec extends GebSpec {
     private Window _window
     private File _reportDir
 
+    static Login _login
+
     String getMode() {
         config.properties.get(MODE_PROPERTY, TEST_MODE)
     }
@@ -33,9 +31,11 @@ abstract class Spec extends GebSpec {
         mode == LEARN_MODE
     }
 
-    LoginPage login() {
-        page = to LoginPageCQupTo55
-        page.login()
+    void login() {
+        if (!_login) {
+            _login = new Login()
+            _login.login(this)
+        }
     }
 
     Screenshot screenshot() {

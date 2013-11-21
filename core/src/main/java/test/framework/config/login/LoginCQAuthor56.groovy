@@ -1,8 +1,8 @@
-package test.framework.page
+package test.framework.config.login
 
 import geb.Page
 
-class LoginPage extends Page {
+class LoginCQAuthor56 extends Page {
 
     static url = 'libs/granite/core/content/login.html'
 
@@ -12,10 +12,9 @@ class LoginPage extends Page {
         loginButton { $("button") }
     }
 
-    Page login(username = 'admin', password = 'admin') {
+    void login(String username, String password) {
         usernameField.value username
         passwordField.value password
         loginButton.click()
-        this
     }
 }

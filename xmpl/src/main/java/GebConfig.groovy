@@ -8,6 +8,7 @@ driver = {
     new FirefoxDriver()
 }
 
+
 reportsDir = {
     new File().getAbsolutePath() + "/test"
 }
