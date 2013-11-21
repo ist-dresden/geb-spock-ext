@@ -1,4 +1,4 @@
-package test.framework.io;
+package test.framework.report.io;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -1,7 +1,6 @@
-package test.framework.io;
+package test.framework.report.io;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 

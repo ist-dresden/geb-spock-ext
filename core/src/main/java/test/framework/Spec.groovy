@@ -1,11 +1,13 @@
 package test.framework
 
+import geb.Configuration
 import geb.spock.GebSpec
 import org.junit.runner.RunWith
 import org.openqa.selenium.By
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
-import test.framework.config.login.Login
+
+import test.framework.geb.ExtendedConfigLoader
 import test.framework.selenium.Window
 import test.framework.spock.ExtendedSputnik
 
@@ -21,7 +23,11 @@ abstract class Spec extends GebSpec {
     private Window _window
     private File _reportDir
 
-    static Login _login
+    static Closure _login
+
+    Configuration createConf() {
+        new ExtendedConfigLoader(gebConfEnv, System.properties, new GroovyClassLoader(getClass().classLoader)).getConf(gebConfScript)
+    }
 
     String getMode() {
         config.properties.get(MODE_PROPERTY, TEST_MODE)
@@ -33,8 +39,13 @@ abstract class Spec extends GebSpec {
 
     void login() {
         if (!_login) {
-            _login = new Login()
-            _login.login(this)
+            _login = config.loginConf
+            if (_login) {
+                if (config.verbose) {
+                    println "login ${config.username}"
+                }
+                _login.call(this, config.username, config.password)
+            }
         }
     }
 
@@ -67,7 +78,7 @@ abstract class Spec extends GebSpec {
 
     void reportGroup(String path) {
         browser.reportGroup(path.replace(' ', '_'))
-        report "\n${this.class.name} / ${path} ..."
+        report "${this.class.name} / ${path} ..."
     }
 
     void report(String message) {

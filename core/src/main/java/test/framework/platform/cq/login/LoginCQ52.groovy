@@ -1,8 +1,8 @@
-package test.framework.config.login
+package test.framework.platform.cq.login
 
 import geb.Page
 
-class LoginCQAuthor52 extends Page {
+class LoginCQ52 extends Page {
 
     static url = 'libs/wcm/auth/content/login.html'
 

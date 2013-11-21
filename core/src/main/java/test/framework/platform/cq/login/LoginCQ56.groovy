@@ -1,8 +1,8 @@
-package test.framework.config.login
+package test.framework.platform.cq.login
 
 import geb.Page
 
-class LoginCQAuthor56 extends Page {
+class LoginCQ56 extends Page {
 
     static url = 'libs/granite/core/content/login.html'
 

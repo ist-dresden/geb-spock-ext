@@ -1,7 +1,7 @@
 package test.framework.report
 
 import org.spockframework.runtime.model.ErrorInfo
-import test.framework.io.TeePrintBuffer
+import test.framework.report.io.TeePrintBuffer
 
 public class Reporting {
 
