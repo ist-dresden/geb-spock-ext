@@ -5,10 +5,6 @@ import test.framework.geb.AdaptedNavigatorFactory
 
 seleniumHub = "http://172.16.218.134:4441/wd/hub"
 
-driver = {
-    new FirefoxDriver()
-}
-
 environments {
 
     hub_win_ie {

@@ -1,5 +1,5 @@
-import test.framework.platform.cq.login.LoginCQ52
-import test.framework.platform.cq.login.LoginCQ56
+import test.platform.cq.login.LoginCQ52
+import test.platform.cq.login.LoginCQ56
 
 environments {
 

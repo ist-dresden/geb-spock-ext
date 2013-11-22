@@ -23,8 +23,14 @@ class Target {
         }
     }
 
-    public String getBaseUrl() {
-        serverUrl + basePath
+    public String getBaseUrl(String path = basePath) {
+        if (!path.endsWith('/')) {
+            path += '/'
+        }
+        while (path.startsWith('/')) {
+            path = path.substring(1)
+        }
+        serverUrl + path
     }
 
     public String getServerUrl() {

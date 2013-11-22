@@ -3,9 +3,13 @@ import test.framework.geb.AdaptedNavigatorFactory
 Boolean _verbose = Boolean.parseBoolean(System.getProperty('verbose', 'true'))
 this.verbose = _verbose
 
+// ---- Geb framework initialization (extension) ----
+
 navigatorFactory = { browser ->
     new AdaptedNavigatorFactory(browser)
 }
+
+// ---- Login configuration extension (config modularization) ----
 
 loadConfig = { configClassName, configOption, defaultOptionValue = null ->
     try {
@@ -27,27 +31,50 @@ loadConfig = { configClassName, configOption, defaultOptionValue = null ->
     }
 }
 
+// ---- Report configuration ----
+
+/** framework default report configuration */
+loadConfig.call('DefaultReportConfig', 'report')
+/** overlay default report configuration with the optional project configuration */
 loadConfig.call('ReportConfig', 'report')
+
+// ---- Driver configuration ----
+
+/** framework default driver configuration (for local tests only) */
+loadConfig.call('DefaultDriverConfig', 'driver')
+/** overlay default driver configuration with the normally necessary project configuration */
 loadConfig.call('DriverConfig', 'driver')
+
+// ---- Target configuration ----
+
+/** framework default target configuration (for local tests only) */
 loadConfig.call('DefaultTargetConfig', 'target')
+/** overlay default target configuration with the normally necessary project configuration */
 loadConfig.call('TargetConfig', 'target')
 
-def target = this.config.target?.call()
-def loginRule = target.loginRule
+// ---- Login configuration ----
+
 /**
- * Parses the credentials from the 'credentials' system property
- * using the pattern {username}:{password}[@{login-rule}]
- * e.g. 'admin:admin@CQ5.6' or 'admin:admin' (default or target rule)
+ * determine login rule (policy key) by the configured target
  */
-String credentialsProperty = System.getProperty('credentials', 'admin:admin')
-def matcher = (credentialsProperty =~ /([^\:]+)\:([^@]+)(@(.+))?/)
-if (matcher.matches()) {
-    this.username = matcher[0][1]
-    this.password = matcher[0][2]
-    if (matcher.groupCount() == 4 && matcher[0][4]) {
-        loginRule = matcher[0][4]
+def _target = this.config.target?.call()
+def _loginRule = _target.loginRule
+/**
+ * Parse the credentials from the 'credentials' system property
+ * using the pattern {username}:{password}[@{login-rule}]
+ * e.g. 'admin:admin@CQ56' or 'admin:admin' (default or target login rule)
+ */
+String _credentialsProperty = System.getProperty('credentials', 'admin:admin')
+def _matcher = (_credentialsProperty =~ /([^\:]+)\:([^@]+)(@(.+))?/)
+if (_matcher.matches()) {
+    this.username = _matcher[0][1]
+    this.password = _matcher[0][2]
+    if (_matcher.groupCount() == 4 && _matcher[0][4]) {
+        _loginRule = _matcher[0][4]
     }
 }
 
-loadConfig.call('BuiltinLoginConfig', 'login', loginRule)
-loadConfig.call('LoginConfig', 'login', loginRule)
+/** framework builtin login configuration */
+loadConfig.call('BuiltinLoginConfig', 'login', _loginRule)
+/** overlay builtin login configuration with the optional project configuration */
+loadConfig.call('LoginConfig', 'login', _loginRule)

@@ -3,7 +3,7 @@ import test.framework.config.Target
 localPort = System.getProperty("localPort", "4502")
 
 target = {
-    new Target("http://localhost:${localPort}/", '', 'CQ56')
+    new Target("http://localhost:${localPort}/", 'content/geometrixx', 'CQ56')
 }
 
 environments {

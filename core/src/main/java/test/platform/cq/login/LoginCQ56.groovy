@@ -1,4 +1,4 @@
-package test.framework.platform.cq.login
+package test.platform.cq.login
 
 import geb.Page
 

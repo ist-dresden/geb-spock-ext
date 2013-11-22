@@ -14,6 +14,18 @@ class ExtendedConfiguration extends Configuration {
         readValue('verbose', false)
     }
 
+    Closure getReportConf() {
+        readValue('report', null)
+    }
+
+    Closure getDriverConf() {
+        readValue('driver', null)
+    }
+
+    Closure getTargetConf() {
+        readValue('target', null)
+    }
+
     Closure getLoginConf() {
         readValue('login', null)
     }
