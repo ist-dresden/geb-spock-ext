@@ -9,7 +9,7 @@ navigatorFactory = { browser ->
     new AdaptedNavigatorFactory(browser)
 }
 
-// ---- Login configuration extension (config modularization) ----
+// ---- configuration extension (config modularization) ----
 
 loadConfig = { configClassName, configOption, defaultOptionValue = null ->
     try {
