@@ -1,1 +1,25 @@
+# test report, test output
 /test
+# filesystem
+.crossref-*
+# IntelliJ
+.idea
+*.iml
+# Eclipse
+.project
+.classpath
+.settings
+.metadata
+Servers
+# Groovy
+.groovy
+# Gradle
+.gradle
+build
+# Maven
+target
+# some source repos
+.svn
+# Mac OS X
+._*
+.DS_*
