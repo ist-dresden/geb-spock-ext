@@ -1,11 +1,16 @@
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.remote.DesiredCapabilities
 import org.openqa.selenium.remote.RemoteWebDriver
-import test.framework.geb.AdaptedNavigatorFactory
 
 seleniumHub = "http://172.16.218.134:4441/wd/hub"
 
 environments {
+
+    firefox {
+        driver = {
+            new FirefoxDriver()
+        }
+    }
 
     hub_win_ie {
         driver = {

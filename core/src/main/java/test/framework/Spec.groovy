@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import test.framework.config.Target
 import test.framework.geb.ExtendedConfigLoader
+import test.framework.geb.ExtendedConfiguration
 import test.framework.selenium.Window
 import test.framework.spock.ExtendedSputnik
 
@@ -20,7 +21,7 @@ abstract class Spec extends GebSpec {
     static final String LEARN_MODE = 'learn'
 
     // one configuration for all tests
-    static Configuration _configuration
+    static ExtendedConfiguration _configuration
     static Target _target
 
     protected _screenshot
@@ -31,14 +32,14 @@ abstract class Spec extends GebSpec {
 
     // Geb modifications
 
-    protected Configuration createConfiguration() {
-        new ExtendedConfigLoader(gebConfEnv, System.properties, new GroovyClassLoader(getClass().classLoader)).getConf(gebConfScript)
+    static ExtendedConfiguration createConfiguration() {
+        new ExtendedConfigLoader(null, System.properties, new GroovyClassLoader(getClass().classLoader)).getConf(null)
     }
 
     /**
      * Use this (static) configuration for all Browser instances (one configuration for all tests).
      */
-    protected Configuration getConfiguration() {
+    static ExtendedConfiguration getConfiguration() {
         if (!_configuration) {
             _configuration = createConfiguration()
         }

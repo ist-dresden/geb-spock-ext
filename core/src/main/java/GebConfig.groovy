@@ -40,7 +40,7 @@ loadConfig.call('ReportConfig', 'report')
 
 // ---- Driver configuration ----
 
-/** project driver configuration with the normally necessary project configuration */
+/** normally necessary project driver configuration */
 loadConfig.call('DriverConfig', 'driver')
 
 // ---- Target configuration ----
@@ -76,3 +76,6 @@ if (_matcher.matches()) {
 loadConfig.call('BuiltinLoginConfig', 'login', _loginRule)
 /** overlay builtin login configuration with the optional project configuration */
 loadConfig.call('LoginConfig', 'login', _loginRule)
+
+/** project test suite configuration */
+loadConfig.call('SuiteConfig', 'suite')
