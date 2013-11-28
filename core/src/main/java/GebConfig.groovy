@@ -12,21 +12,21 @@ navigatorFactory = { browser ->
 // ---- configuration extension (config modularization) ----
 
 loadConfig = { configClassName, configOption, defaultOptionValue = null ->
+    String configKey = System.getProperty(configOption, defaultOptionValue)
     try {
         Class configClass = Class.forName(configClassName)
-        ConfigObject configObject = new ConfigSlurper(
-                System.getProperty(configOption, defaultOptionValue)).parse(configClass)
+        ConfigObject configObject = new ConfigSlurper(configKey).parse(configClass)
         if (this.config) {
             this.config = this.config.merge(configObject)
         } else {
             this.config = configObject
         }
         if (_verbose) {
-            println "configuration extended for aspect '${configOption}' (${configClassName})"
+            println "configuration extended for aspect '${configOption}':'${configKey}' (${configClassName})"
         }
     } catch (ClassNotFoundException cnfex) {
         if (_verbose) {
-            println "no configuration loaded for aspect '${configOption}' (${configClassName})"
+            println "no configuration loaded for aspect '${configOption}':'${configKey}' (${configClassName})"
         }
     }
 }
@@ -40,16 +40,14 @@ loadConfig.call('ReportConfig', 'report')
 
 // ---- Driver configuration ----
 
-/** framework default driver configuration (for local tests only) */
-loadConfig.call('DefaultDriverConfig', 'driver')
-/** overlay default driver configuration with the normally necessary project configuration */
+/** project driver configuration with the normally necessary project configuration */
 loadConfig.call('DriverConfig', 'driver')
 
 // ---- Target configuration ----
 
 /** framework default target configuration (for local tests only) */
 loadConfig.call('DefaultTargetConfig', 'target')
-/** overlay default target configuration with the normally necessary project configuration */
+/** overlay target configuration with the normally necessary project configuration */
 loadConfig.call('TargetConfig', 'target')
 
 // ---- Login configuration ----
@@ -58,7 +56,7 @@ loadConfig.call('TargetConfig', 'target')
  * determine login rule (policy key) by the configured target
  */
 def _target = this.config.target?.call()
-def _loginRule = _target.loginRule
+def _loginRule = _target?.loginRule
 /**
  * Parse the credentials from the 'credentials' system property
  * using the pattern {username}:{password}[@{login-rule}]

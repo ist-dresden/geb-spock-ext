@@ -1,5 +1,6 @@
 package test.framework
 
+import geb.Browser
 import geb.Configuration
 import geb.spock.GebSpec
 import org.junit.runner.RunWith
@@ -18,6 +19,8 @@ abstract class Spec extends GebSpec {
     static final String TEST_MODE = 'test'
     static final String LEARN_MODE = 'learn'
 
+    // one configuration for all tests
+    static Configuration _configuration
     static Target _target
 
     protected _screenshot
@@ -26,16 +29,49 @@ abstract class Spec extends GebSpec {
     private File _reportDir
     private boolean _loggedIn
 
-    Configuration createConf() {
+    // Geb modifications
+
+    protected Configuration createConfiguration() {
         new ExtendedConfigLoader(gebConfEnv, System.properties, new GroovyClassLoader(getClass().classLoader)).getConf(gebConfScript)
     }
 
-    String getMode() {
-        config.properties.get(MODE_PROPERTY, TEST_MODE)
+    /**
+     * Use this (static) configuration for all Browser instances (one configuration for all tests).
+     */
+    protected Configuration getConfiguration() {
+        if (!_configuration) {
+            _configuration = createConfiguration()
+        }
+        _configuration
     }
 
-    boolean isLearnMode() {
-        mode == LEARN_MODE
+    @Override
+    Configuration getConfig() {
+        configuration
+    }
+
+    @Override
+    Browser createBrowser() {
+        new Browser(configuration)
+    }
+
+    // Target and baseUrl
+
+    Target getTarget() {
+        if (!_target) {
+            if (config.targetConf) {
+                _target = config.targetConf.call()
+            }
+        }
+        _target
+    }
+
+    @Override
+    void setBaseUrl(String path = "") {
+        if (!path.matches("^http(s)?://.*")) {
+            path = target.getBaseUrl(path)
+        }
+        super.setBaseUrl(path)
     }
 
     // login
@@ -55,32 +91,27 @@ abstract class Spec extends GebSpec {
         }
     }
 
+    @Override
     void resetBrowser() {
         super.resetBrowser()
         _loggedIn = false
     }
 
     void setup() {
-        setBaseUrl(target.getBaseUrl())
-        login()
+        if (config.driverConf) {
+            setBaseUrl(target.getBaseUrl())
+            login()
+        }
     }
 
-    // Target and baseUrl
+    // Test Mode
 
-    Target getTarget() {
-        if (!_target) {
-            if (config.targetConf) {
-                _target = config.targetConf.call()
-            }
-        }
-        _target
+    String getMode() {
+        config.properties.get(MODE_PROPERTY, TEST_MODE)
     }
 
-    void setBaseUrl(String path = "") {
-        if (!path.matches("^http(s)?://.*")) {
-            path = target.getBaseUrl(path)
-        }
-        super.setBaseUrl(path)
+    boolean isLearnMode() {
+        mode == LEARN_MODE
     }
 
     // screenshots

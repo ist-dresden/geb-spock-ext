@@ -4,5 +4,5 @@ import org.junit.runner.RunWith;
 import test.framework.junit.ExtendedSuite;
 
 @RunWith(ExtendedSuite.class)
-public class TestSuite extends junit.framework.TestSuite {
+public class SpecSuite extends junit.framework.TestSuite {
 }
