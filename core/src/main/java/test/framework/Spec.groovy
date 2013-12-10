@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import test.framework.config.Target
 import test.framework.geb.ExtendedConfigLoader
 import test.framework.geb.ExtendedConfiguration
+import test.framework.report.Reporting
 import test.framework.selenium.Window
 import test.framework.spock.ExtendedSputnik
 
@@ -24,11 +25,13 @@ abstract class Spec extends GebSpec {
     static ExtendedConfiguration _configuration
     static Target _target
 
+    private boolean _loggedIn
+    private Window _window
+
     protected _screenshot
 
-    private Window _window
     private File _reportDir
-    private boolean _loggedIn
+    private File _templateDir
 
     // Geb modifications
 
@@ -148,27 +151,33 @@ abstract class Spec extends GebSpec {
 
     // reporting
 
+    void report(String message) {
+        Reporting reporting = Reporting.instance
+        reporting.info(message)
+    }
+
     void reportGroup(String path) {
         browser.reportGroup(path.replace(' ', '_'))
         report "${this.class.name} / ${path} ..."
     }
 
-    void report(String message) {
-        println message
-    }
-
-    File getReportBase() {
-        new File(/*config.reportsDir ?: */ new File('test'), browser.driver.class.simpleName);
-    }
-
-    File getReportSpecDir() {
-        new File(reportBase, this.class.name.replace('.', '/').toLowerCase())
+    String getSpecificationPath() {
+        this.class.name.replace('.', '/').toLowerCase()
     }
 
     File getReportDir() {
         if (!_reportDir) {
-            _reportDir = new File(reportSpecDir, browser.reportGroup ?: '.')
+            Reporting reporting = Reporting.instance
+            _reportDir = new File(new File(reporting.reportBase, specificationPath), browser.reportGroup ?: '.')
         }
         _reportDir
+    }
+
+    File getTemplateDir() {
+        if (!_templateDir) {
+            Reporting reporting = Reporting.instance
+            _templateDir = new File(new File(reporting.templateBase, specificationPath), browser.reportGroup ?: '.')
+        }
+        _templateDir
     }
 }

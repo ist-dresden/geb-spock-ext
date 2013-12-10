@@ -19,22 +19,14 @@ class ReportExtension implements IGlobalExtension {
             void beforeSpec(SpecInfo _spec) {
                 Reporting reporting = Reporting.instance
                 reporting.adjustSection(spec.reflection)
-                reporting.indent()
-                reporting.info "<div class=\"description\">"
-                reporting.info _spec.description?.toString()
-                reporting.indent()
-                reporting.info "</div>"
+                reporting.description _spec.description?.toString()
             }
 
             @Override
             void beforeFeature(FeatureInfo feature) {
                 Reporting reporting = Reporting.instance
                 reporting.adjustSection(feature.parent.reflection, feature.name)
-                reporting.indent()
-                reporting.info "<div class=\"description\">"
-                reporting.info feature.description?.toString()
-                reporting.indent()
-                reporting.info "</div>"
+                reporting.description feature.description?.toString()
             }
 
             @Override
@@ -42,13 +34,13 @@ class ReportExtension implements IGlobalExtension {
                 Reporting reporting = Reporting.instance
                 Object[] dataValues = iteration.dataValues
                 if (dataValues && dataValues.length > 0) {
-                    reporting.info "<h5 class=\"loop-data\">"
+                    reporting.indent()
+                    reporting.write "<h5 class=\"loop-data\">"
                     for (Object value : dataValues) {
-                        reporting.info "<span class=\"value\">${value}</span>"
+                        reporting.write "<span class=\"value\">${value}</span>"
                     }
-                    reporting.info "</h5>"
+                    reporting.write "</h5>"
                 }
-                reporting.reset()
                 Reporting.Result result = reporting.getResult()
                 result.running = true
             }
@@ -56,9 +48,7 @@ class ReportExtension implements IGlobalExtension {
             @Override
             void afterIteration(IterationInfo iteration) {
                 Reporting reporting = Reporting.instance
-                reporting.indent(); reporting.info "<div class=\"output\">"
-                reporting.text(Reporting.instance.sniffed)
-                reporting.indent(); reporting.info "</div>"
+                reporting.output()
                 Reporting.Result result = reporting.getResult()
                 if (result.running) {
                     reporting.success()
