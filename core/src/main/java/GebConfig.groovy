@@ -1,6 +1,6 @@
 import test.framework.geb.AdaptedNavigatorFactory
 
-Boolean _verbose = Boolean.parseBoolean(System.getProperty('verbose', 'true'))
+Boolean _verbose = Boolean.parseBoolean(System.getProperty('verbose', 'false'))
 this.verbose = _verbose
 
 // ---- Geb framework initialization (extension) ----

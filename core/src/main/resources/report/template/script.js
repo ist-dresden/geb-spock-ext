@@ -4,4 +4,7 @@ $(document).ready(function(){
     $('.toggle').click(function(){
        $(this).closest('li').toggleClass('collapsed');
     });
+    $('.image.link a').colorbox({rel:"screen",title:function(){
+            return $(this).find('img').attr('title');
+        }});
 });

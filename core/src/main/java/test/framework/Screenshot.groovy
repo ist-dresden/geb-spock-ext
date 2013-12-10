@@ -7,6 +7,7 @@ import org.openqa.selenium.OutputType
 import org.openqa.selenium.TakesScreenshot
 import org.openqa.selenium.WebElement
 import test.framework.image.ScreenImage
+import test.framework.report.Reporting
 
 import java.awt.Color
 import java.awt.Graphics2D
@@ -55,6 +56,7 @@ class Screenshot extends ScreenshotReporter {
             File file = getFile(_specification.reportDir, getTemplateName(), 'png')
             if (file.canRead()) {
                 _template = new ScreenImage(file)
+                Reporting.instance.image(file, 'template', 'screen')
             }
         }
         _template
@@ -64,8 +66,9 @@ class Screenshot extends ScreenshotReporter {
         _label = label
         String filename = _specification.learnMode ? getTemplateName() : getScreenshotName()
         File file = getFile(_specification.reportDir, filename, 'png')
-        _specification.report "save image: ${file.absolutePath}"
+        println "save image: ${file.absolutePath}"
         screenImage.save(file)
+        Reporting.instance.image(file, 'screenshot', 'screen')
         this
     }
 

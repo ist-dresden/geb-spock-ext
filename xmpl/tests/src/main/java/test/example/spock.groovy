@@ -14,6 +14,7 @@ class TestcaseOne extends Spec {
         go "http://www.google.de"
 
         then: "the title must be 'Google'"
+        screenshot().save("google").validate()
         page.title == "Google"
     }
 }
@@ -26,6 +27,7 @@ class TestcaseTwo extends Spec {
         go "http://www.heise.de"
 
         then: "the test for the title should fail..."
+        screenshot().save("heise").validate()
         page.title == "Heise"
     }
 
@@ -35,6 +37,7 @@ class TestcaseTwo extends Spec {
         go "http://www.wikipedia.de"
 
         then: "the page title should contain 'Wikipedia'"
+        screenshot().save("wikipedia").validate()
         page.title =~ /Wikipedia/
     }
 }

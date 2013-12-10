@@ -16,7 +16,6 @@ class ExtendedConfiguration extends Configuration {
     }
 
     String[] getSuiteClassNames() {
-        Closure suiteConf = readValue('suite', null)
         String[] classNames = null
         if (suiteConf) {
             classNames = suiteConf.call()
@@ -25,6 +24,10 @@ class ExtendedConfiguration extends Configuration {
             classNames = [System.getProperty("class", "TestSuite")]
         }
         classNames
+    }
+
+    Closure getSuiteConf() {
+        readValue('suite', null)
     }
 
     Closure getReportConf() {

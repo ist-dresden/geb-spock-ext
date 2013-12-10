@@ -1,6 +1,8 @@
 package test.framework.report
 
 import org.spockframework.runtime.model.ErrorInfo
+import test.framework.Spec
+import test.framework.geb.ExtendedConfiguration
 import test.framework.report.io.TeePrintBuffer
 
 public class Reporting {
@@ -27,6 +29,62 @@ public class Reporting {
     private ByteArrayOutputStream _sniffer
     public PrintStream systemOut
     public PrintStream systemErr
+
+    File getReportBase() {
+        new File('test')
+    }
+
+    File getTemplateBase() {
+        new File('test')
+    }
+
+    public void indent(int depth = -1) {
+        if (depth < 0) {
+            depth = currentSection ? currentSection.length * 2 : 0
+        }
+        for (int i = 0; i < depth; i++) write("  ")
+    }
+
+    public void description(String text) {
+        indent()
+        write "<div class=\"description\">"
+        write text
+        write "</div>"
+    }
+
+    public void info(String text) {
+        indent()
+        write "<p>"
+        write text
+        write "</p>"
+    }
+
+    public void image(File file, String type, String group) {
+        String base = reportBase.absolutePath
+        String path = file.absolutePath
+        if (path.startsWith(base)) {
+            path = path.substring(base.length() + 1)
+        }
+        write "<div class=\"${type} image link\">"
+        write "<h5>${type}</h5>"
+        write "<a href=\"${path}\" rel=\"${group}\\\"><img src=\"${path}\" title=\"${type} - ${path}\" /></a>"
+        write "</div>"
+    }
+
+    public void text(String text) {
+        writeln(text)
+    }
+
+    public void output() {
+        String content = sniffed.trim()
+        if (!content.isAllWhitespace()) {
+            indent()
+            write "<div class=\"output\">"
+            write content
+            write "</div>"
+        }
+        reset()
+    }
 
     private String[] currentSection
 
@@ -147,6 +205,7 @@ public class Reporting {
                 writeln("</ul>")
             }
         }
+        output()
         for (int i = index; i < path.length; i++) {
             String label = path[i]
             if (!(index + 1 == path.length && index + 1 == currentSection.length)) {
@@ -165,13 +224,6 @@ public class Reporting {
         path = path.replace('.', '/').toLowerCase()
     }
 
-    public void indent(int depth = -1) {
-        if (depth < 0) {
-            depth = currentSection ? currentSection.length * 2 : 0
-        }
-        for (int i = 0; i < depth; i++) write("  ")
-    }
-
     public void result(Result result) {
         writeTemplate("result.html", result.properties)
     }
@@ -179,13 +231,13 @@ public class Reporting {
     public void success(String text = null) {
         getResult().success()
         if (text && !text.empty) {
-            info(text)
+            info text
         }
     }
 
     public void error(String text) {
         getResult().failure()
-        writeln(text)
+        info text
     }
 
     public void error(ErrorInfo info) {
@@ -193,12 +245,12 @@ public class Reporting {
         writeTemplate("error.html", info.properties)
     }
 
-    public void info(String text) {
-        writeln(text)
+    public String getSniffed() {
+        _sniffer.toString("UTF-8")
     }
 
-    public void text(String text) {
-        write(text)
+    public void reset() {
+        _sniffer.reset()
     }
 
     protected void write(String text) {
@@ -207,14 +259,6 @@ public class Reporting {
 
     public void writeln(String text = "") {
         reportStream.println(text)
-    }
-
-    public void reset() {
-        _sniffer.reset()
-    }
-
-    public String getSniffed() {
-        _sniffer.toString("UTF-8").trim()
     }
 
     protected void setUp() {
