@@ -2,6 +2,15 @@ package test.example
 
 import test.framework.Spec
 
+/**
+ * This examples needs an appropriate configuration:
+ * <ul>
+ *     <li>a running CQ instance,</li>
+ *     <li>a target configuration which points to the running CQ instance,</li>
+ *     <li>optional a concrete a driver configuration.</li>
+ * </ul>
+ * See TargetConfig examples 'target=local_cq' or 'target=back_to_local_cq'.
+ */
 class CQExample extends Spec {
 
     /**

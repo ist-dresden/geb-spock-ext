@@ -30,7 +30,6 @@ class ReportExtension implements IGlobalExtension {
             void beforeFeature(FeatureInfo feature) {
                 Reporting reporting = Reporting.instance
                 reporting.adjustSection(feature.parent.reflection, feature.name)
-                reporting.reset()
                 reporting.indent()
                 reporting.info "<div class=\"description\">"
                 reporting.info feature.description?.toString()
@@ -40,24 +39,34 @@ class ReportExtension implements IGlobalExtension {
 
             @Override
             void beforeIteration(IterationInfo iteration) {
-                //Reporting.instance.info "beforeIteration(${iteration.name})..."
+                Reporting reporting = Reporting.instance
+                Object[] dataValues = iteration.dataValues
+                if (dataValues && dataValues.length > 0) {
+                    reporting.info "<h5 class=\"loop-data\">"
+                    for (Object value : dataValues) {
+                        reporting.info "<span class=\"value\">${value}</span>"
+                    }
+                    reporting.info "</h5>"
+                }
+                reporting.reset()
+                Reporting.Result result = reporting.getResult()
+                result.running = true
             }
 
             @Override
             void afterIteration(IterationInfo iteration) {
-                //Reporting.instance.info "afterIteration(${iteration.name})..."
-            }
-
-            @Override
-            void afterFeature(FeatureInfo feature) {
                 Reporting reporting = Reporting.instance
                 reporting.indent(); reporting.info "<div class=\"output\">"
                 reporting.text(Reporting.instance.sniffed)
                 reporting.indent(); reporting.info "</div>"
                 Reporting.Result result = reporting.getResult()
-                if (result._successCount < 1 && result._failureCount == 0) {
+                if (result.running) {
                     reporting.success()
                 }
+            }
+
+            @Override
+            void afterFeature(FeatureInfo feature) {
             }
 
             @Override

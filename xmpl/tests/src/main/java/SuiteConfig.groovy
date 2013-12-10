@@ -28,7 +28,7 @@ environments {
         suite = {
             [
                     'test.example.report.ReportTest',
-                    'test.example.report.ReportTest3'
+                    'test.example.report.subsection.ReportTest3'
             ]
         }
     }

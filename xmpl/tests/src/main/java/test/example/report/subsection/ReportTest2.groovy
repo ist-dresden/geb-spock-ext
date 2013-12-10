@@ -1,4 +1,4 @@
-package test.example.report
+package test.example.report.subsection
 
 import test.framework.Spec
 

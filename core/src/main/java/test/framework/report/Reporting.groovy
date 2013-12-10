@@ -36,6 +36,7 @@ public class Reporting {
 
         public int _successCount
         public int _failureCount
+        public boolean running = false;
 
         private Map<String, Result> _results
 
@@ -43,25 +44,27 @@ public class Reporting {
             _results = new HashMap<String, Result>()
         }
 
-        public Result getResult(String[] path, int index = 0) {
-            Result result = this
-            if (path && index < path.length) {
-                result = _results.get(path[index])
-                if (!result) {
-                    result = new Result()
-                    _results.put(path[index], result)
-                }
-                result = result.getResult(path, index + 1)
+        public Result get(String key) {
+            Result value = _results.get(key)
+            if (!value) {
+                value = new Result();
+                _results.put(key, value)
             }
-            result
+            value
         }
 
         public void success() {
-            _successCount++;
+            if (running) {
+                running = false
+                _successCount++
+            }
         }
 
         public void failure() {
-            _failureCount++;
+            if (running) {
+                running = false
+                _failureCount++
+            }
         }
 
         public int getSuccessCount() {
@@ -80,8 +83,12 @@ public class Reporting {
             value
         }
 
+        public String getSummary() {
+            getFailureCount() > 0 ? "failed" : getSuccessCount() > 0 ? "passed" : "skipped"
+        }
+
         public Map getProperties() {
-            ['successCount': getSuccessCount(), 'failureCount': getFailureCount()]
+            ['summary': getSummary(), 'successCount': getSuccessCount(), 'failureCount': getFailureCount()]
         }
     }
 
@@ -100,8 +107,15 @@ public class Reporting {
         _instance
     }
 
-    public Result getResult(String[] path = currentSection) {
-        _result.getResult(path)
+    /**
+     * Retrieves the result instance for a given test section.
+     */
+    public Result getResult(int index = currentSection.length - 1) {
+        Result result = _result
+        for (int i = 0; i <= index; i++) {
+            result = result.get(currentSection[i])
+        }
+        result
     }
 
     public void adjustSection(Object context, String feature) {
@@ -123,7 +137,9 @@ public class Reporting {
             index++
         }
         for (int i = currentSection.length - 1; i >= index; i--) {
-            result(getResult())
+            write("</div>")
+            Result segmentResult = getResult(i);
+            result(segmentResult);
             indent(1 + i * 2);
             writeln("</li>")
             if (!(index + 1 == path.length && index + 1 == currentSection.length)) {
@@ -138,14 +154,14 @@ public class Reporting {
                 writeln("<ul class=\"section\">")
             }
             indent(1 + i * 2);
-            writeln("<li><h4 class=\"path\">${label}</h4>")
+            writeln("<li><h4 class=\"path\"><span class=\"toggle\"></span>${label}</h4><div class=\"report\">")
         }
         currentSection = path
     }
 
     protected String getContextPath(Object context) {
         String path = context instanceof String ? (String) context :
-            (context instanceof Class ? ((Class) context).name : context?.getClass().name);
+                (context instanceof Class ? ((Class) context).name : context?.getClass().name);
         path = path.replace('.', '/').toLowerCase()
     }
 
@@ -198,28 +214,39 @@ public class Reporting {
     }
 
     public String getSniffed() {
-        _sniffer.toString("UTF-8")
+        _sniffer.toString("UTF-8").trim()
     }
 
     protected void setUp() {
         _sniffer = new ByteArrayOutputStream()
         System.setOut(new TeePrintBuffer(systemOut = System.out, _sniffer))
         System.setErr(new TeePrintBuffer(systemErr = System.err, _sniffer))
-        systemOut.println("Reporting.setUp()")
+        //systemOut.println("Reporting.setUp()")
         reportRoot = new File('test')
         reportRoot.mkdirs()
         reportFile = new File(reportRoot, 'report.html')
         reportFileStream = new FileOutputStream(reportFile)
         reportStream = new PrintStream(reportFileStream)
-        writeTemplate("htmlProlog.html")
+        writeln "<html>"
+        writeln "<head>"
+        writeln "<style>"
+        writeSnippet "style.css"
+        writeln "</style>"
+        writeSnippet "libs.html"
+        writeln "<script>"
+        writeSnippet "script.js"
+        writeln "</script>"
+        writeln "</head>"
+        writeln "<body>"
+        writeln "  <div id=\"sections\">"
     }
 
     protected void tearDown() {
         adjustSection("")
-        writeTemplate "htmlEpilog.html"
+        writeTemplate "tail.html"
         reportStream.close()
         reportFileStream.close()
-        systemOut.println("Reporting.tearDown()")
+        //systemOut.println("Reporting.tearDown()")
         System.setOut(systemOut)
         System.setErr(systemErr)
     }
@@ -227,9 +254,13 @@ public class Reporting {
     public writeTemplate(String templateFileName, Map binding = new HashMap()) {
         def engine = new groovy.text.SimpleTemplateEngine()
         def resource = getClass().getResource('/report/template/' + templateFileName)
-        systemOut.println "template: ${resource}"
         def template = engine.createTemplate(resource.text)
         def result = template.make(binding)
         reportStream.print(result)
+    }
+
+    public writeSnippet(String snippetFileName) {
+        def resource = getClass().getResource('/report/template/' + snippetFileName)
+        reportStream.print(resource.text)
     }
 }
