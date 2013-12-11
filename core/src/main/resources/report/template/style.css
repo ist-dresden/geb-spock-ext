@@ -103,6 +103,9 @@
 #sections li .report .error {
     color: #800;
 }
+#sections li .report .error .message pre {
+    font-family: monospace;
+}
 #sections ul.section li .result {
     position: absolute;
     top: 0.2em;
