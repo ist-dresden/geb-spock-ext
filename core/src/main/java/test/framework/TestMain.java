@@ -34,6 +34,9 @@ class TestMain {
                 suite = (Class<SpecSuite>) Class.forName(className);
                 try {
                     junitCore.run(suite);
+                    if (Reporting.getInstance().getResult(0).getFailureCount() > 0) {
+                        exitCode = 1;
+                    }
                 } catch (Throwable ex) {
                     System.err.println("Exception thrown performing test '" + className + "': " + ex);
                     exitCode = Math.max(exitCode, 250);

@@ -32,4 +32,12 @@ environments {
             ]
         }
     }
+
+    cq {
+        suite = {
+            [
+                    'test.example.CQExample'
+            ]
+        }
+    }
 }
