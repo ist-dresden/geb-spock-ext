@@ -1,0 +1,4 @@
+#!/bin/bash
+cd ${GEB_SPOCK_EXT_PRJ}/xmpl/app
+java -jar target/geb-spock-ext-xmpl-app-1.0-SNAPSHOT.jar $*
+echo "finished - exit code: $?"

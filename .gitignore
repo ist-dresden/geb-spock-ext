@@ -1,5 +1,6 @@
 # test report, test output
 /test
+/xmpl/app/test
 # filesystem
 .crossref-*
 # IntelliJ
