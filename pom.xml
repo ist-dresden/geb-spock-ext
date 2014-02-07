@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <selenium.version>2.37.1</selenium.version>
+        <selenium.version>2.39.0</selenium.version>
     </properties>
 
     <modules>
