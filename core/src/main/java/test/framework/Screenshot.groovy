@@ -37,12 +37,11 @@ class Screenshot extends ScreenshotReporter {
         image
     }
 
-    boolean validate() {
+    boolean validate(int limit = _browser.config.properties.get('maxPHasDistance', 2)) {
         if (_specification.learnMode) {
             return true
         }
         int distance = screenImage.distance(template)
-        int limit = _browser.config.properties.get('maxPHasDistance', 3)
         _specification.report "validate ${screenshotName}: ${screenImage.hash} =~ ${template ? template.hash : 'no template'} ? distance: ${distance} <= limit: ${limit} ! ${distance <= limit ? 'ok' : 'fail'}"
         distance <= limit
     }
