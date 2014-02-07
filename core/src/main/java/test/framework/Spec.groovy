@@ -23,7 +23,6 @@ abstract class Spec extends GebSpec {
 
     // one configuration for all tests
     static ExtendedConfiguration _configuration
-    static Target _target
 
     private boolean _loggedIn
     private Window _window
@@ -62,12 +61,7 @@ abstract class Spec extends GebSpec {
     // Target and baseUrl
 
     Target getTarget() {
-        if (!_target) {
-            if (config.targetConf) {
-                _target = config.targetConf.call()
-            }
-        }
-        _target
+        configuration.target
     }
 
     @Override
