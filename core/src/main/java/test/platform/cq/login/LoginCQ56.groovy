@@ -6,15 +6,9 @@ class LoginCQ56 extends Page {
 
     static url = 'libs/granite/core/content/login.html'
 
-    static content = {
-        usernameField { $("input", name: "j_username") }
-        passwordField { $("input", name: "j_password") }
-        loginButton { $("button") }
-    }
-
     void login(String username, String password) {
-        usernameField.value username
-        passwordField.value password
-        loginButton.click()
+        $("input", name: "j_username").value username
+        $("input", name: "j_password").value password
+        $("button").click()
     }
 }

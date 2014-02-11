@@ -10,6 +10,13 @@ environments {
         }
     }
 
+    CQ53 {
+        login = { spec, username, password ->
+            LoginCQ52 page = spec.to LoginCQ52
+            page.login(username, password)
+        }
+    }
+
     CQ56 {
         login = { spec, username, password ->
             LoginCQ56 page = spec.to LoginCQ56
