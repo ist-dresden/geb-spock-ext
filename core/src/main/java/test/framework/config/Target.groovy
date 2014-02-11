@@ -4,13 +4,16 @@ class Target {
 
     private String _serverUrl
     private String _basePath
+    private Map _implicitParameters
     private String _loginRule
 
     public Target(String serverUrl,
-                  String basePath,
-                  String loginPule) {
+                  String basePath = '/',
+                  Map implicitParameters = [:],
+                  String loginPule = '') {
         _serverUrl = serverUrl
         _basePath = basePath
+        _implicitParameters = implicitParameters
         _loginRule = loginPule
         if (!_serverUrl.endsWith('/')) {
             _serverUrl += '/'
@@ -39,6 +42,10 @@ class Target {
 
     public String getBasePath() {
         _basePath
+    }
+
+    public Map getImplicitParameters() {
+        _implicitParameters
     }
 
     public String getLoginRule() {

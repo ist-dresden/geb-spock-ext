@@ -8,6 +8,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import test.framework.config.Target
+import test.framework.geb.ExtendedBrowser
 import test.framework.geb.ExtendedConfigLoader
 import test.framework.geb.ExtendedConfiguration
 import test.framework.report.Reporting
@@ -21,10 +22,12 @@ abstract class Spec extends GebSpec {
     static final String TEST_MODE = 'test'
     static final String LEARN_MODE = 'learn'
 
-    // one configuration for all tests
+    // one configuration for all Specs
     static ExtendedConfiguration _configuration
 
-    private boolean _loggedIn
+    // one browser for all Specs #TODO: make this configurable
+    static Browser _reusableBrowser
+
     private Window _window
 
     protected _screenshot
@@ -55,15 +58,24 @@ abstract class Spec extends GebSpec {
 
     @Override
     Browser createBrowser() {
-        new Browser(configuration)
+        if (_reusableBrowser == null) {
+            _reusableBrowser = new ExtendedBrowser(configuration)
+        }
+        _reusableBrowser
     }
 
     // Target and baseUrl
 
+    /**
+     * @return the target configuration used currently
+     */
     Target getTarget() {
         configuration.target
     }
 
+    /**
+     * merge base url with target configuration if path is not fully qualified
+     */
     @Override
     void setBaseUrl(String path = "") {
         if (!path.matches("^http(s)?://.*")) {
@@ -72,34 +84,30 @@ abstract class Spec extends GebSpec {
         super.setBaseUrl(path)
     }
 
-    // login
-
-    void login() {
-        if (!_loggedIn) {
-            if (config.loginConf) {
-                if (config.verbose) {
-                    println "login ${config.username}"
-                }
-                String currentBase = getBaseUrl()
-                setBaseUrl(target.serverUrl)
-                config.loginConf.call(this, config.username, config.password)
-                setBaseUrl(currentBase)
-            }
-            _loggedIn = true
-        }
+    void reload() {
+        browser.reload()
     }
 
+    /**
+     * explicit login (e.g. during setup)
+     */
+    void login() {
+        browser.login()
+    }
+
+    /**
+     * check current login state
+     */
+    boolean getLoggedIn() {
+        browser.loggedIn
+    }
+
+    /**
+     * Delegate reset to the extended browser implementation
+     */
     @Override
     void resetBrowser() {
-        super.resetBrowser()
-        _loggedIn = false
-    }
-
-    void setup() {
-        if (config.driverConf) {
-            setBaseUrl(target.getBaseUrl())
-            login()
-        }
+        browser.reset()
     }
 
     // Test Mode
